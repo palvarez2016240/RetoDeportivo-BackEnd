@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors")
 
 // IMPORTACION DE RUTAS
-var rutas = require("./src/rutas/rutas");
+var UsuarioRutas = require("./src/Rutas/Usuario.rutas");
 
 // MIDDLEWARES
 app.use(bodyParser.urlencoded({extended: false}));
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // APLICACION DE RUTAS
-app.use('/api', rutas);
+app.use('/api', UsuarioRutas);
 
 //EXPORTAR
 module.exports = app;
