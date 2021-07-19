@@ -45,9 +45,6 @@ function registrar(req, res) {
     let UsuaM = new Usuario();
     let params = req.body;
 
-    if(params.edad < 6 || params.edad > 64  ){
-        return res.status(500).send({ mensaje: "No puede registrarse por ser menor o mayor de 5 o 64 años"})
-    }
     if (params.nombres && params.email && params.password && params.apellidos && params.usuario && params.edad) {
         UsuaM.nombres = params.nombres;
         UsuaM.apellidos = params.apellidos;
