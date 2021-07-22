@@ -12,6 +12,6 @@ var UsuarioShema=Schema({
     password: String,
     rol: String,
     imagen: String,
-
+    equipos: Boolean,
 })
 module.exports = mongoose.model('Usuario',UsuarioShema);
