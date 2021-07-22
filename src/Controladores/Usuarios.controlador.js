@@ -42,8 +42,8 @@ function admin(req, res) {
 }
 
 function registrar(req, res) {
-    let UsuaM = new Usuario();
-    let params = req.body;
+    var UsuaM = new Usuario();
+    var params = req.body;
 
     if (params.nombres && params.email && params.password && params.apellidos && params.usuario && params.edad) {
         UsuaM.nombres = params.nombres;
@@ -53,7 +53,7 @@ function registrar(req, res) {
         UsuaM.email = params.email;
         UsuaM.rol = "ROL_USER"
         UsuaM.imagen = null;
-        UsuaM.equipos = false;
+        UsuaM.equipos = null;
         if(params.edad < 6 || params.edad > 64  ){
             return res.status(500).send({ mensaje: "No puede registrarse por ser menor o mayor de 5 o 64 años"})
         }
@@ -113,8 +113,8 @@ function login(req, res) {
 }
 
 function editarUsuario(req, res){
-    let UsuarioId = req.params.id;
-    let params = req.body;
+    var UsuarioId = req.params.id;
+    var params = req.body;
     delete params.password;
     if (req.user.sub != UsuarioId) {
         if (req.user.rol != 'ROL_ADMINAPP') { 
@@ -146,7 +146,7 @@ function editarUsuario(req, res){
 }
 
 function eliminarUsuario(req, res){
-    let UsuarioId = req.params.id
+    var UsuarioId = req.params.id
 
     Usuario.findOne({ _id: UsuarioId }).exec((err, userEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error en la solicitud" });

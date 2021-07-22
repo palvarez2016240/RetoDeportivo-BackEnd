@@ -9,7 +9,6 @@ exports.createToken = function(usuario) {
         sub: usuario._id,
         nombre: usuario.nombre,
         rol: usuario.rol,
-        password: usuario.password,
         correo: usuario.correo,
         telefono: usuario.telefono,
         iat: moment().unix(),
