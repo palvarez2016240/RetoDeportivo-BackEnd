@@ -79,6 +79,8 @@ function CrearCategoria3(req, res) {
 
 function obtenerCategorias(req, res) {
     Categoria.find({}).exec((err, categorias) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion de buscar categorias' });
+        if (!categorias) return res.status(500).send({ mensaje: 'Error al buscar las categorias' });
         return res.status(200).send({ categorias })
     })
 }
