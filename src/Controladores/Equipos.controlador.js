@@ -19,6 +19,7 @@ function CrearEquipo(req, res) {
             EquipoModel.categoria = params.categoria
             EquipoModel.puntos = 0
             EquipoModel.pj = 0
+            EquipoModel.torneoJ = false
 
 
             Equipo.find({
@@ -128,48 +129,117 @@ function EliminarMiembro(req, res) {
     var idCoach = req.user.sub
     var iddueño;
 
-    
+
 
     Equipo.findOne({ dueño: req.user.sub }).exec((err, EquipoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
         if (!EquipoEncontrado) return res.status(500).send({ mensaje: "No es dueño de un equipo" })
+        var idEquipo = EquipoEncontrado._id
         iddueño = EquipoEncontrado.dueño
 
-        console.log(req.user.sub)
-        console.log(iddueño)
 
+        
+        Usuario.findOne({ equipos: idEquipo }).exec((err, UsuarioEncontrado) => {
+            idCoach.toString()
+            iddueño.toString()
+            if (err) return res.status(500).send({ mensaje: "Error en la peticion " })
+            if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "El usuario no existe" })
 
-        /*if (req.user.sub === idCoach){*/
-            Equipo.findOneAndUpdate({ "integrantes._id": UsuarioID }, { $pull: { integrantes: { _id: UsuarioID } } }, { new: true },
-            (err, EquipoActualizado) => {
-                if (err) return res.status(500).send({ mensaje: "Error en la peticion de eliminar al miembro del equipo" })
-                if (!EquipoActualizado) return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
-                return res.status(200).send({ EquipoActualizado })
-            })
-        /*} else{
-            return res.status(500).send({ mensaje: "Solo el dueño del equipo puede eliminar a miembros" })
-        }    */   
+            if (iddueño == idCoach) {
+                Equipo.findOneAndUpdate({ "integrantes._id": UsuarioID }, { $pull: { integrantes: { _id: UsuarioID } } }, { new: true },
+                    (err, EquipoActualizado) => {
+                        if (err) return res.status(500).send({ mensaje: "Error en la peticion de eliminar al miembro del equipo" })
+                        if (!EquipoActualizado) return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
+                        return res.status(200).send({ EquipoActualizado })
+                    })
+            } else {
+                return res.status(500).send({ mensaje: "Solo el dueño del equipo puede eliminar a miembros" })
+            }
 
-
+        })
     })
+}
 
+function EliminarEquipo(req, res) {
+    var idEquipo = req.params.id
+    var coach
+
+    Equipo.findById(idEquipo, (err, EquipoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
+        if (!EquipoEncontrado) return res.status(500).send({ mensaje: "El equipo no existe" })
+        coach = EquipoEncontrado.dueño
+        
+        var user = req.user.sub
+
+        user.toString()
+        coach.toString()
+        
+        if (coach == user) {
+           Equipo.findByIdAndDelete(idEquipo,(err,EquipoEliminado)=>{
+               if(err) return res.status(500).send({ mensaje:"Error en la peticion"})
+               if(!EquipoEliminado){
+
+                return res.status(500).send({ mensaje:"Error al eliminar el equipo"})
+               } else {
+
+                Usuario.updateMany({equipos: idEquipo},{$set:{equipos: null}},{multi:true},(err,UsuarioActualizado)=>{
+
+                    if(err) return res.status(500).send({ mensaje:"Error en la peticion"})
+                    if(!UsuarioActualizado) return res.status(500).send({ mensaje:"Error al actualizr Usuario"})
+
+                    return res.status(200).send({EquipoEliminado})
+                })
+                
+               }
+             
+              
+
+
+           })
+        } else {
+            return res.status(200).send({ mensaje: "No puede elimiar un equipo donde no sea dueño " })
+        }
+    })
+}
+
+function EditarEquipo(req,res){
+
+    var idEquipo = req.params.id
+
+    Equipo.findByIdAndUpdate(idEquipo,params,{new:true},(err,EquipoActualizado)=>{
+
+        var coach = EquipoActualizado.dueño
+        var idDueño = req.user
+        coach.toString()
+        idDueño.toString()
+        if(err) return res.status(500).send({mensaje:"Error en la peticion"})
+        if(!EquipoActualizado) return res.status(500).send({mensaje:"Error al actualizar el equipo"})
+        if(coach == idDueño){
+            return res.status(200).send({EquipoActualizado})
+        }else{
+            return res.status(500).send({ mensaje: "No puede editar un equipo donde no sea dueño"})
+        }
+        
+    })
 
 }
 
-function EliminarEquipo(req,res){
+function MostrarEquipo(req,res){
+
+    Equipo.find().exec((err,EquipoEncontrado)=>{
+        if(err) return res.status(500).send({mensaje: "Error en la peticion"})
+        if(!EquipoEncontrado) return res.status(500).send({mensaje: "No se han agregado Equipos"})
+        return res.status(200).send({EquipoEncontrado})
+    })
+}
+
+function MostarEquipoID(req,res){
     var idEquipo = req.params.id
-    var coach 
 
     Equipo.findById(idEquipo,(err,EquipoEncontrado)=>{
-        if(err) return res.status(500).send({ mensaje:"Error en la peticion"})
-        if(!EquipoEncontrado) return res.status(500).send({ mensaje:"El equipo no existe"})
-        coach = EquipoEncontrado.dueño
-
-        if(coach === req.user.sub){
-            return res.status(200).send({mensaje:"Esto si funciona siuuuuuuuuu"})
-        }else{
-            return res.status(200).send({mensaje:"Esto no funciona :((("})
-        }
+        if(err) return res.status(500).send({ mensaje: "Error en la peticion" })
+        if(!EquipoEncontrado) return res.status(500).send({ mensaje: "El equipo no existe" })
+        return res.status(200).send({EquipoEncontrado})
     })
 }
 
@@ -177,5 +247,8 @@ module.exports = {
     CrearEquipo,
     AgregarMiembro,
     EliminarMiembro,
-    EliminarEquipo
+    EliminarEquipo,
+    EditarEquipo,
+    MostrarEquipo,
+    MostarEquipoID
 }

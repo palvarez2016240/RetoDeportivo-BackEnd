@@ -15,7 +15,9 @@ var EquipoSchema = Schema({
     }],
     integrantes: [{
         usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
-    }]
+    }],
+
+    torneoJ:Boolean
 })
 
 module.exports = mongoose.model('Equipos', EquipoSchema)

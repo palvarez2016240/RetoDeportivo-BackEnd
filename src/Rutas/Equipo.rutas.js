@@ -12,5 +12,8 @@ api.post("/CrearEquipo", md_autorizacion.ensureAuth, EquipoController.CrearEquip
 api.put("/AgregarMiembro/:id", md_autorizacion.ensureAuth, EquipoController.AgregarMiembro)
 api.put("/EliminarMiembro/:id", md_autorizacion.ensureAuth, EquipoController.EliminarMiembro)
 api.delete("/EliminarEquipo/:id", md_autorizacion.ensureAuth,EquipoController.EliminarEquipo)
+api.put("/EditarEquipo/:id", md_autorizacion.ensureAuth, EquipoController.EditarEquipo)
+api.get("/MostrarEquipos", EquipoController.MostrarEquipo)
+api.get("/MostrarEquiposID/:id", EquipoController.MostrarEquipo)
 
 module.exports =api;
