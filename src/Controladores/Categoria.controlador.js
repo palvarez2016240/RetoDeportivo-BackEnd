@@ -77,10 +77,29 @@ function CrearCategoria3(req, res) {
    })
 }
 
+function obtenerCategorias(req, res) {
+    Categoria.find({}).exec((err, categorias) => {
+        return res.status(200).send({ categorias })
+    })
+}
+
+function obtenerCategoriasId(req, res) {
+    var cateId = req.params.id;
+
+    Categoria.findById(cateId, (err, cateEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion de categoria' });
+        if (!cateEncontrado) return res.status(500).send({ mensaje: 'Error al obtener categorias' });
+        return res.status(200).send({ cateEncontrado });
+    })
+}
+
+
 
 module.exports={
     CrearCategoria1,
     CrearCategoria2,
-    CrearCategoria3
+    CrearCategoria3,
+    obtenerCategorias,
+    obtenerCategoriasId
 }
 
