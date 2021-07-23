@@ -14,11 +14,12 @@ function CrearEquipo(req, res) {
 
         if (params.nombre && params.categoria) {
 
-            EquipoModel.nombre = params.nombre
-            EquipoModel.dueño = req.user.sub
-            EquipoModel.categoria = params.categoria
-            EquipoModel.puntos = 0
-            EquipoModel.pj = 0
+            EquipoModel.nombre = params.nombre;
+            EquipoModel.dueño = req.user.sub;
+            EquipoModel.categoria = params.categoria;
+            EquipoModel.puntos = 0;
+            EquipoModel.pj = 0;
+            EquipoModel.torneo = null;
 
 
             Equipo.find({
