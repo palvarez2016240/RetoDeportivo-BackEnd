@@ -17,7 +17,8 @@ var EquipoSchema = Schema({
         usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
     }],
 
-    torneo: {type: Schema.Types.ObjectId, ref: 'Torneo'}
+    torneo: {type: Schema.Types.ObjectId, ref: 'Torneo'},
+    
 })
 
 module.exports = mongoose.model('Equipos', EquipoSchema)

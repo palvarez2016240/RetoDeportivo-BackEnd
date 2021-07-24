@@ -243,6 +243,17 @@ function MostarEquipoID(req,res){
     })
 }
 
+function BuscarEquipoCategoria(req,res){
+
+    var idCategoria = req.params.id
+
+    Equipo.find({categoria: idCategoria}).exec((err, EquipoEncontrado)=>{
+        if(err) return res.status(500).send({ mensaje:"Error en la peticion"})
+        if(!EquipoEncontrado) return res.status(500).send({ mensaje: "No existen equipos en esta categoria"})
+        return res.status(200).send({ EquipoEncontrado})
+    })
+}
+
 module.exports = {
     CrearEquipo,
     AgregarMiembro,
@@ -250,5 +261,6 @@ module.exports = {
     EliminarEquipo,
     EditarEquipo,
     MostrarEquipo,
-    MostarEquipoID
+    MostarEquipoID,
+    BuscarEquipoCategoria
 }

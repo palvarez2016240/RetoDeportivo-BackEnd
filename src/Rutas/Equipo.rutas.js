@@ -15,5 +15,6 @@ api.delete("/EliminarEquipo/:id", md_autorizacion.ensureAuth,EquipoController.El
 api.put("/EditarEquipo/:id", md_autorizacion.ensureAuth, EquipoController.EditarEquipo)
 api.get("/MostrarEquipos", EquipoController.MostrarEquipo)
 api.get("/MostrarEquiposID/:id", EquipoController.MostrarEquipo)
+api.get("/BuscarCategoria/:id", md_autorizacion.ensureAuth, EquipoController.BuscarEquipoCategoria)
 
 module.exports =api;
