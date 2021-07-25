@@ -11,7 +11,9 @@ var EquipoSchema = Schema({
     puntos: Number,
     pj: Number,
     torneosG: [{
-        torneo: { type: Schema.Types.ObjectId, ref: 'Torneo' }
+        torneoId: { type: Schema.Types.ObjectId, ref: 'Torneo' },
+        nombreTorneo: String,
+        imagenTorneo: String
     }],
     integrantes: [{
         usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
