@@ -170,7 +170,7 @@ function unirEquipos(req, res) {
     var params = req.body;
 
     if (req.user.rol != "ROL_ADMINAPP") {
-        return res.status(500).send({ mensaje: "Solo el ADMIN puede eliminar un torneo" })
+        return res.status(500).send({ mensaje: "Solo el ADMIN puede agregar equipos a un torneo" })
     }
 
     if (!params.equipoId) {
@@ -253,8 +253,8 @@ function unirMiEquipo(req, res) {
     var idTorneo = req.params.idTorneo;
     var idUsuario = req.user.sub;
 
-    if (req.user.rol != "ROL_USER") {
-        return res.status(500).send({ mensaje: "Solo el usurio puede unir un equipo al torneo" })
+    if (req.user.rol != "ROL_COACH") {
+        return res.status(500).send({ mensaje: "Solo el dueño puede unir su equipo al torneo" })
     }
 
     equipos.findOne({ dueño: idUsuario }).exec((err, equipoEncontrado) => {
