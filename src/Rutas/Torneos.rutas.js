@@ -18,6 +18,7 @@ api.get('/equiposTorneo/:idTorneo', torneoControlador.equiposTorneo);
 api.put('/iniciarTorneo/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.iniciarTorneo);
 api.put('/terminarTorneo/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.terminarTorneo);
 api.post('/unirMiEquipo/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.unirMiEquipo);
+api.get('/equiposSinTorneo/:idTorneo', torneoControlador.equiposSinTorneo);
 api.post('/subirImagenTorneo/:idTorneo', [md_autorizacion.ensureAuth, md_subirImagen], torneoControlador.subirImgTorneo);
 api.get('/obtenerImagenTorneo/:imagen', torneoControlador.obtenerImgTorneo);
 

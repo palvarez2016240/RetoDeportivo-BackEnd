@@ -279,7 +279,7 @@ function unirMiEquipo(req, res) {
                     var categoriaT = categoriaEncontradaT.nombre;
 
                     if (categoriaT === categoriaE) {
- 
+
                         if (torneoEquipo === null) {
 
                             if (integrantesEquipo.length >= 5 && integrantesEquipo.length <= 10) {
@@ -345,7 +345,7 @@ function iniciarTorneo(req, res) {
 
         if (empezado === false) {
 
-            if(cantidad === 0 ){
+            if (cantidad === 0) {
                 return res.status(500).send({ mensaje: "No hay ningun equipo en el torneo" })
             }
 
@@ -369,7 +369,6 @@ function iniciarTorneo(req, res) {
         }
     })
 }
-//Una busqueda de equipos que no tengan torneo y sea de la categoria
 
 function terminarTorneo(req, res) {
     var idTorneo = req.params.idTorneo;
@@ -454,6 +453,22 @@ function terminarTorneo(req, res) {
     })
 }
 
+function equiposSinTorneo(req, res) {
+    var idTorneo = req.params.idTorneo;
+
+    torneos.findOne({ _id: idTorneo }).exec((err, torneoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener el torneo' });
+        if (!torneoEncontrado) return res.status(500).send({ mensaje: 'El torneo no existe' })
+        var categoriaTorneo = torneoEncontrado.idCategoria;
+
+        equipos.find({ torneo: null, categoria: categoriaTorneo }).exec((err, equiposEncontrados) => {
+            if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener los equipos' });
+            if (equiposEncontrados.length === 0) return res.status(500).send({ mensaje: 'No hay ningun equipo disponible' });
+            return res.status(200).send({ equiposEncontrados });
+        })
+    })
+}
+
 function eliminarImgTorneo(res, rutaArchivo, mensaje) {
 
     fs.unlink(rutaArchivo, (err) => {
@@ -525,6 +540,7 @@ module.exports = {
     iniciarTorneo,
     terminarTorneo,
     unirMiEquipo,
+    equiposSinTorneo,
     subirImgTorneo,
     obtenerImgTorneo
 }
