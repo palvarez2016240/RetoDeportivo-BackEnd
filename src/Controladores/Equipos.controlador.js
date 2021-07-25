@@ -19,7 +19,7 @@ function CrearEquipo(req, res) {
             EquipoModel.categoria = params.categoria
             EquipoModel.puntos = 0
             EquipoModel.pj = 0
-            EquipoModel.torneoJ = false
+            EquipoModel.torneo = null
 
 
             Equipo.find({
