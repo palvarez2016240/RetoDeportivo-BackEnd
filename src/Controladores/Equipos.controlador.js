@@ -66,10 +66,10 @@ function AgregarMiembro(req, res) {
     if (params.usuario) {
 
         Equipo.findOne({ dueño: req.user.sub }).exec((err, EquipoEncontrado) => {
-            idCoach = EquipoEncontrado.dueño
+            
             if (err) return res.status(500).send({ mensaje: "error en la peticion" })
             if (!EquipoEncontrado) return res.status(500).send({ mensaje: "No es dueño de un equipo" })
-
+            idCoach = EquipoEncontrado.dueño
             if (idCoach != req.user.sub) {
 
                 return res.status(500).send({ mensaje: "No posee el permiso para agregar un miembro" })
@@ -240,17 +240,27 @@ function MostarEquipoID(req,res){
         if(err) return res.status(500).send({ mensaje: "Error en la peticion" })
         if(!EquipoEncontrado) return res.status(500).send({ mensaje: "El equipo no existe" })
         return res.status(200).send({EquipoEncontrado})
-    })
+    }).populate('categoria','nombre')
 }
 
 function BuscarEquipoCategoria(req,res){
 
     var idCategoria = req.params.id
 
-    Equipo.find({categoria: idCategoria}).exec((err, EquipoEncontrado)=>{
+    Equipo.find({categoria: idCategoria}).populate('integrantes.usuario','nombres' ).exec((err, EquipoEncontrado)=>{
         if(err) return res.status(500).send({ mensaje:"Error en la peticion"})
         if(!EquipoEncontrado) return res.status(500).send({ mensaje: "No existen equipos en esta categoria"})
+        console.log(EquipoEncontrado._id)
         return res.status(200).send({ EquipoEncontrado})
+    })
+}
+
+function BuscarTeam (req,res){
+    var idEquipo = req.params.id
+    Usuario.find({equipos: idEquipo}).exec((err,TeamEcontrado)=>{
+        if(err) return res.status(500).send({mensaje:"Error en la peticion"})
+        if(!TeamEcontrado) return res.status(500).send({ mensaje: "No hay miembros en el equipo"})
+        return res.status(200).send({TeamEcontrado})
     })
 }
 
@@ -262,5 +272,6 @@ module.exports = {
     EditarEquipo,
     MostrarEquipo,
     MostarEquipoID,
-    BuscarEquipoCategoria
+    BuscarEquipoCategoria,
+    BuscarTeam
 }

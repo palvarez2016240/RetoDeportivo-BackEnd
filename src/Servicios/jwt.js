@@ -11,6 +11,7 @@ exports.createToken = function(usuario) {
         rol: usuario.rol,
         correo: usuario.correo,
         telefono: usuario.telefono,
+        equipos: usuario.equipos,
         iat: moment().unix(),
         exp: moment().day(10, 'days').unix()
     }
