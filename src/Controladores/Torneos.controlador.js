@@ -279,7 +279,7 @@ function unirMiEquipo(req, res) {
                     var categoriaT = categoriaEncontradaT.nombre;
 
                     if (categoriaT === categoriaE) {
-
+ 
                         if (torneoEquipo === null) {
 
                             if (integrantesEquipo.length >= 5 && integrantesEquipo.length <= 10) {
@@ -344,6 +344,10 @@ function iniciarTorneo(req, res) {
         var cantidad = cantidadEquipos.length;
 
         if (empezado === false) {
+
+            if(cantidad === 0 ){
+                return res.status(500).send({ mensaje: "No hay ningun equipo en el torneo" })
+            }
 
             if (cantidad % 2 === 0) {
 
