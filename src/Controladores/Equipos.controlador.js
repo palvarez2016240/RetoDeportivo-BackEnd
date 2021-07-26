@@ -136,54 +136,65 @@ function AgregarMiembro(req, res) {
 function EliminarMiembro(req, res) {
 
     var UsuarioID = req.params.id
-    var idCoach = req.user.sub
+    var idCoach 
     var iddueño;
 
 
+    Usuario.findById(UsuarioID,(err,UserEncontrado)=>{
 
-    Equipo.findOne({ dueño: req.user.sub }).exec((err, EquipoEncontrado) => {
-        if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
-        if (!EquipoEncontrado) return res.status(500).send({ mensaje: "No es dueño de un equipo" })
-        var idEquipo = EquipoEncontrado._id
-        iddueño = EquipoEncontrado.dueño
-
-
+        if(err) return res.status(500).send({mensaje: "Error en la peticion"})
+        if(!UserEncontrado){
+            return res.status(500).send({mensaje: "Usuario no encontrado"})
+        } else {
+            idCoach = UserEncontrado.equipos
+            console.log(idCoach)
+            Equipo.findOne({ _id: idCoach }).exec((err, EquipoEncontrado) => {
+                if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
+                if (!EquipoEncontrado) return res.status(500).send({ mensaje: "No es dueño de un equipo" })
+                var idEquipo = EquipoEncontrado._id
+                iddueño = EquipoEncontrado.dueño
         
-        Usuario.findOne({ equipos: idEquipo }).exec((err, UsuarioEncontrado) => {
-            idCoach.toString()
-            iddueño.toString()
-            var userID = UsuarioEncontrado._id
-            if (err) return res.status(500).send({ mensaje: "Error en la peticion " })
-            if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "El usuario no existe" })
-
-            if (iddueño == idCoach) {
-                Equipo.findOneAndUpdate({ "integrantes._id": UsuarioID }, { $pull: { integrantes: { _id: UsuarioID } } }, { new: true },
-                    (err, EquipoActualizado) => {
-                        if (err) return res.status(500).send({ mensaje: "Error en la peticion de eliminar al miembro del equipo" })
-                        if (!EquipoActualizado){
-                            return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
-                        }else{
-                            Usuario.update({ _id: userID }, {
-                                $set: {
-                                    equipos: null
-                                }
-                            }, { new: true }, (err, UserActualizado) => {
-
-                                if (err) return res.status(500).send({ mensaje: "Error en la peticion de actualizar user" })
-                                if (!UserActualizado) return res.status(500).send({ mensaje: "No se puedo actualizar el usuario" })
-                                return res.status(200).send({ EquipoActualizado })
+                Usuario.findOne({ equipos: idEquipo }).exec((err, UsuarioEncontrado) => {
+                    idCoach.toString()
+                    iddueño.toString()
+                    var userID = UsuarioEncontrado._id
+                    if (err) return res.status(500).send({ mensaje: "Error en la peticion " })
+                    if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "El usuario no existe" })
+        
+                    if (iddueño == iddueño) {
+                        Equipo.findOneAndUpdate({ "integrantes.usuario": UsuarioID }, { $pull: { integrantes: { usuario: UsuarioID } } }, { new: true },
+                            (err, EquipoActualizado) => {
+                                if (err) return res.status(500).send({ mensaje: "Error en la peticion de eliminar al miembro del equipo" })
+                                if (!EquipoActualizado){
+                                    return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
+                                }else{
+                                    Usuario.update({ _id: userID }, {
+                                        $set: {
+                                            equipos: null
+                                        }
+                                    }, { new: true }, (err, UserActualizado) => {
+        
+                                        if (err) return res.status(500).send({ mensaje: "Error en la peticion de actualizar user" })
+                                        if (!UserActualizado) return res.status(500).send({ mensaje: "No se puedo actualizar el usuario" })
+                                        return res.status(200).send({ EquipoActualizado })
+                                    })
+                                    
+                                    
+                                }   
+                                
                             })
-                            
-                            
-                        }   
-                        
-                    })
-            } else {
-                return res.status(500).send({ mensaje: "Solo el dueño del equipo puede eliminar a miembros" })
-            }
+                    } else {
+                        return res.status(500).send({ mensaje: "Solo el dueño del equipo puede eliminar a miembros" })
+                    }
+        
+                })
+            })
+        }
 
-        })
     })
+
+
+    
 }
 
 function EliminarEquipo(req, res) {
@@ -338,6 +349,18 @@ function obtenerImg(req, res) {
     }))
 }
 
+function obtenerUsuario(req,res){
+
+    Usuario.find({equipos:null,rol:"ROL_USER"}).exec((err,UsuarioEncontrado) =>{
+        if(err) return res.status(500).send({mensaje: "Error en la peticion"})
+        if(!UsuarioEncontrado) return res.status(500).send({mensaje: "No existen usuarios"})
+        if(UsuarioEncontrado) return res.status(200).send({ UsuarioEncontrado})
+    })
+}
+
+
+
+
 
 module.exports = {
     CrearEquipo,
@@ -350,5 +373,6 @@ module.exports = {
     BuscarEquipoCategoria,
     BuscarTeam,
     subirImg,
-    obtenerImg
+    obtenerImg,
+    obtenerUsuario
 }
