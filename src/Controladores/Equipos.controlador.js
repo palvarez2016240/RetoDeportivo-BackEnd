@@ -2,58 +2,68 @@
 
 var Equipo = require('../Modelos/Equipos.model')
 var Usuario = require('../Modelos/Usuarios.model')
+var fs = require('fs');
+var path = require('path');
 
 function CrearEquipo(req, res) {
 
+    var idCategoria = req.params.id
     var params = req.body
     var EquipoModel = new Equipo()
 
     if (req.user.rol === "ROL_ADMINAPP") {
-        return res.status(500).send({ message: "No posee el permiso de crear un equipo" })
+        return res.status(500).send({ mensaje: "No posee el permiso de crear un equipo" })
     } else {
 
-        if (params.nombre && params.categoria) {
+        if(req.user.rol === "ROL_COACH"){
+            return res.status(500).send({ message: "Solamente puede tener registrado un equipo"})
+        } else{
+            if (params.nombre) {
 
-            EquipoModel.nombre = params.nombre
-            EquipoModel.dueño = req.user.sub
-            EquipoModel.categoria = params.categoria
-            EquipoModel.puntos = 0
-            EquipoModel.pj = 0
-            EquipoModel.torneo = null
-
-
-            Equipo.find({
-                $or: [
-                    { nombre: EquipoModel.nombre },
-                    { dueño: EquipoModel.dueño }
-                ]
-            }).exec((err, EquipoEncontrado) => {
-                if (err) return res.status(500).send({ mensaje: "error en la peticion" })
-                if (EquipoEncontrado && EquipoEncontrado.length >= 1) {
-                    return res.status(200).send({ mensaje: "Nombre repetido o ya tiene un equipo registrado" })
-                } else {
-                    EquipoModel.save((err, EquipoCreado) => {
-                        if (err) return res.status(500).send({ message: "Error en la peticion de agregar usuario" })
-
-                        if (!EquipoCreado) return res.status(500).send({ message: "Error al crear el equipo" })
-                        if (EquipoCreado) {
-
-                            Usuario.update({ _id: req.user.sub }, { $set: { rol: "ROL_COACH" } }, { new: true }, (err, UserActualizado) => {
-                                if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
-                                if (!UserActualizado) return res.status(500).send({ mensaje: "Error al actualizar al usuario" })
-                                return res.status(200).send({ EquipoCreado })
-                            })
-
-                        }
-                    })
-
-                }
-            })
-
-
-        } else {
-            return res.status(500).send({ mensaje: "Ingrese los campos necesarios" })
+                EquipoModel.nombre = params.nombre
+                EquipoModel.dueño = req.user.sub
+                EquipoModel.categoria = idCategoria
+                EquipoModel.puntos = 0
+                EquipoModel.pj = 0
+                EquipoModel.torneo = null
+                EquipoModel.imagen = null
+    
+    
+                Equipo.find({
+                    $or: [
+                        { nombre: EquipoModel.nombre },
+                        { dueño: EquipoModel.dueño }
+                    ]
+                }).exec((err, EquipoEncontrado) => {
+                    if (err) return res.status(500).send({ mensaje: "error en la peticion" })
+                    if (EquipoEncontrado && EquipoEncontrado.length >= 1) {
+                        return res.status(500).send({ mensaje: "Nombre repetido o ya tiene un equipo registrado" })
+                    } else {
+                        EquipoModel.save((err, EquipoCreado) => {
+                            if (err) return res.status(500).send({ message: "Error en la peticion de agregar usuario" })
+                            var idEquipoCreado = EquipoCreado._id
+                            if (!EquipoCreado) return res.status(500).send({ message: "Error al crear el equipo" })
+                            if (EquipoCreado) {
+    
+                                Usuario.update({ _id: req.user.sub }, { $set: { rol: "ROL_COACH",equipos:idEquipoCreado } }, { new: true }, (err, UserActualizado) => {
+                                    if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
+                                    if (!UserActualizado) return res.status(500).send({ mensaje: "Error al actualizar al usuario" })
+                                    return res.status(200).send({ EquipoCreado })
+                                })
+    
+                            }
+                        })
+    
+                    }
+                })
+    
+    
+            } else {
+                return res.status(500).send({ mensaje: "Ingrese los campos necesarios" })
+            }
         }
+
+        
     }
 
 
@@ -142,6 +152,7 @@ function EliminarMiembro(req, res) {
         Usuario.findOne({ equipos: idEquipo }).exec((err, UsuarioEncontrado) => {
             idCoach.toString()
             iddueño.toString()
+            var userID = UsuarioEncontrado._id
             if (err) return res.status(500).send({ mensaje: "Error en la peticion " })
             if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "El usuario no existe" })
 
@@ -149,8 +160,23 @@ function EliminarMiembro(req, res) {
                 Equipo.findOneAndUpdate({ "integrantes._id": UsuarioID }, { $pull: { integrantes: { _id: UsuarioID } } }, { new: true },
                     (err, EquipoActualizado) => {
                         if (err) return res.status(500).send({ mensaje: "Error en la peticion de eliminar al miembro del equipo" })
-                        if (!EquipoActualizado) return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
-                        return res.status(200).send({ EquipoActualizado })
+                        if (!EquipoActualizado){
+                            return res.status(500).send({ mensaje: "No existe el miembro que desea eliminar" })
+                        }else{
+                            Usuario.update({ _id: userID }, {
+                                $set: {
+                                    equipos: null
+                                }
+                            }, { new: true }, (err, UserActualizado) => {
+
+                                if (err) return res.status(500).send({ mensaje: "Error en la peticion de actualizar user" })
+                                if (!UserActualizado) return res.status(500).send({ mensaje: "No se puedo actualizar el usuario" })
+                                return res.status(200).send({ EquipoActualizado })
+                            })
+                            
+                            
+                        }   
+                        
                     })
             } else {
                 return res.status(500).send({ mensaje: "Solo el dueño del equipo puede eliminar a miembros" })
@@ -205,20 +231,15 @@ function EliminarEquipo(req, res) {
 function EditarEquipo(req,res){
 
     var idEquipo = req.params.id
+    var params = req.body
 
     Equipo.findByIdAndUpdate(idEquipo,params,{new:true},(err,EquipoActualizado)=>{
 
-        var coach = EquipoActualizado.dueño
-        var idDueño = req.user
-        coach.toString()
-        idDueño.toString()
         if(err) return res.status(500).send({mensaje:"Error en la peticion"})
         if(!EquipoActualizado) return res.status(500).send({mensaje:"Error al actualizar el equipo"})
-        if(coach == idDueño){
+        
             return res.status(200).send({EquipoActualizado})
-        }else{
-            return res.status(500).send({ mensaje: "No puede editar un equipo donde no sea dueño"})
-        }
+        
         
     })
 
@@ -240,7 +261,7 @@ function MostarEquipoID(req,res){
         if(err) return res.status(500).send({ mensaje: "Error en la peticion" })
         if(!EquipoEncontrado) return res.status(500).send({ mensaje: "El equipo no existe" })
         return res.status(200).send({EquipoEncontrado})
-    }).populate('categoria','nombre')
+    }).populate('categoria','nombre').populate('torneo','nombre')
 }
 
 function BuscarEquipoCategoria(req,res){
@@ -264,6 +285,60 @@ function BuscarTeam (req,res){
     })
 }
 
+function subirImg(req, res) {
+    var equipo = req.params.id
+
+    torneos.findOne({ _id: equipo }).exec((err, ImagenSubida) => {
+        if (err) return res.status(500).send({ mensaje: "Error" });
+        if (!ImagenSubida) return res.status(500).send({ mensaje: "El torneo no existe" })
+
+        if (req.user.rol != 'ROL_ADMINAPP') {
+            return res.status(500).send({ mensaje: "Solo el ADMIN puede poner foto" })
+        } else {
+
+            if (req.files) {
+
+                var direccionArchivo = req.files.imagen.path;
+
+                var direccion_split = direccionArchivo.split('\\');
+
+                var nombre_archivo = direccion_split[3];
+
+                var extension_archivo = nombre_archivo.split('.');
+
+                var nombre_extension = extension_archivo[1].toLowerCase();
+
+                if (nombre_extension === 'png' || nombre_extension === 'jpg' || nombre_extension === 'gif') {
+
+                    torneos.findByIdAndUpdate(equipo, { imagen: nombre_archivo }, { new: true }, (err, ImagenSubida) => {
+                        return res.status(200).send({ ImagenSubida });
+                    })
+                } else {
+
+                    return eliminarImgTorneo(res, direccionArchivo, 'Tipo de imagen no permitida');
+                }
+            } else {
+                return res.status(500).send({ mensaje: "No se ha subido ningun archivo" })
+            }
+        }
+    })
+}
+
+function obtenerImg(req, res) {
+    var nombreImagen = req.params.imagen;
+    var rutaArchivo = `./src/imagenes/equipos/${nombreImagen}`;
+
+    //Funcion para obtener la imagen en archivo
+    fs.access(rutaArchivo, ((err) => {
+        if (err) {
+            return res.status(500).send({ mensaje: "No existe la imagen" });
+        } else {
+            return res.sendFile(path.resolve(rutaArchivo));
+        }
+    }))
+}
+
+
 module.exports = {
     CrearEquipo,
     AgregarMiembro,
@@ -273,5 +348,7 @@ module.exports = {
     MostrarEquipo,
     MostarEquipoID,
     BuscarEquipoCategoria,
-    BuscarTeam
+    BuscarTeam,
+    subirImg,
+    obtenerImg
 }
