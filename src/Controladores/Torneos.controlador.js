@@ -106,7 +106,7 @@ function editarTorneo(req, res) {
                     if (estaIniciado === false) {
 
                         torneos.findByIdAndUpdate(idTorneo, params, { new: true }, (err, torneoEditado) => {
-                            if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
+                            if (err) return res.status(500).send({ mensaje: "Error en la peticion 2" })
                             if (!torneoEditado) return res.status(500).send({ mensaje: "No se ha podido editar el torneo" })
                             if (torneoEditado) {
                                 return res.status(200).send({ mensaje: "Torneo editado exitosamente" })
@@ -332,10 +332,6 @@ function unirMiEquipo(req, res) {
 function iniciarTorneo(req, res) {
     var idTorneo = req.params.idTorneo;
 
-    if (req.user.rol != "ROL_ADMINAPP") {
-        return res.status(500).send({ mensaje: "Solo el ADMIN puede iniciar un torneo" })
-    }
-
     torneos.findOne({ _id: idTorneo }).exec((err, torneoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error" });
         if (!torneoEncontrado) return res.status(500).send({ mensaje: "El torneo no existe" })
@@ -372,10 +368,6 @@ function iniciarTorneo(req, res) {
 
 function terminarTorneo(req, res) {
     var idTorneo = req.params.idTorneo;
-
-    if (req.user.rol != "ROL_ADMINAPP") {
-        return res.status(500).send({ mensaje: "Solo el ADMIN puede terminar un torneo" })
-    }
 
     torneos.findOne({ _id: idTorneo }).exec((err, torneoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error" });
