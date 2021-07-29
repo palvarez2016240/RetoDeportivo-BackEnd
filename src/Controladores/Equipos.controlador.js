@@ -39,6 +39,8 @@ function CrearEquipo(req, res) {
                     if (EquipoEncontrado && EquipoEncontrado.length >= 1) {
                         return res.status(500).send({ mensaje: "Nombre repetido o ya tiene un equipo registrado" })
                     } else {
+                        
+                        
                         EquipoModel.save((err, EquipoCreado) => {
                             if (err) return res.status(500).send({ message: "Error en la peticion de agregar usuario" })
                             var idEquipoCreado = EquipoCreado._id
@@ -47,8 +49,22 @@ function CrearEquipo(req, res) {
     
                                 Usuario.update({ _id: req.user.sub }, { $set: { rol: "ROL_COACH",equipos:idEquipoCreado } }, { new: true }, (err, UserActualizado) => {
                                     if (err) return res.status(500).send({ mensaje: "Error en la peticion" })
-                                    if (!UserActualizado) return res.status(500).send({ mensaje: "Error al actualizar al usuario" })
-                                    return res.status(200).send({ EquipoCreado })
+                                    if (!UserActualizado){
+                                        return res.status(500).send({ mensaje: "Error al actualizar al usuario" })
+                                    } else {
+
+                                        Equipo.findByIdAndUpdate(idEquipoCreado, {
+                                            $push: {
+                
+                                                integrantes: { usuario: req.user.sub }
+                                            }
+                                        }, { new: true }, (err, UsuarioAgregado) => {
+                                            if (err) return res.status(500).send({ mensaje: "Error en la peticion de guardar miembro de equipo" })
+                                            if (!UsuarioAgregado) return res.status(500).send({ mensaje: "no se agrego el usuario" })
+                                            return res.status(200).send({ EquipoCreado })
+                                        })
+                                    }
+                                    
                                 })
     
                             }
@@ -359,6 +375,64 @@ function obtenerUsuario(req,res){
 }
 
 
+function unirAEquipo(req, res) {
+    var idEquipo = req.params.id;
+    var idUsuario = req.params.idUsuario;
+
+    Equipo.findOne({ _id: idEquipo }).exec((err, equipoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Error' });
+        if (!equipoEncontrado){
+            return res.status(500).send({ mensaje: 'El usuario no es dueño de ningun equipo' });
+        }else {
+
+            Usuario.findById(idUsuario, (err, UsuarioEncontrado) => {
+                if (err) return res.status(500).send({ mensaje: "error en la peticion" })
+                if (!UsuarioEncontrado) return res.status(500).send({ mensaje: "El usuario no existe" })
+                var userEn = UsuarioEncontrado.rol
+                var equ = UsuarioEncontrado.equipos
+                var userID = UsuarioEncontrado._id
+
+                if (userEn === "ROL_USER" && equ === null) {
+
+                    Equipo.findByIdAndUpdate(idEquipo, {
+                        $push: {
+
+                            integrantes: { usuario: idUsuario }
+                        }
+                    }, { new: true }, (err, UsuarioAgregado) => {
+                        if (err) return res.status(500).send({ mensaje: "Error en la peticion de guardar miembro de equipo" })
+                        if (!UsuarioAgregado) return res.status(500).send({ mensaje: "no se agrego el usuario" })
+                        if (UsuarioAgregado) {
+
+                            Usuario.update({ _id: userID }, {
+                                $set: {
+                                    equipos: idEquipo
+                                }
+                            }, { new: true }, (err, UserActualizado) => {
+
+                                if (err) return res.status(500).send({ mensaje: "Error en la peticion de actualizar user" })
+                                if (!UserActualizado) return res.status(500).send({ mensaje: "No se puedo actualizar el usuario" })
+                                return res.status(200).send({ UsuarioAgregado })
+                            })
+
+                        }
+                    })
+
+
+                } else {
+                    return res.status(500).send({ mensaje: "Ya se ha unido a un equipo" })
+
+                }
+            })
+        } 
+
+                
+
+        
+    })
+}
+
+
 
 
 
@@ -374,5 +448,6 @@ module.exports = {
     BuscarTeam,
     subirImg,
     obtenerImg,
-    obtenerUsuario
+    obtenerUsuario,
+    unirAEquipo
 }

@@ -20,7 +20,7 @@ var EquipoSchema = Schema({
     }],
 
     torneo: {type: Schema.Types.ObjectId, ref: 'Torneo'},
-    imagen:String
+    imagen:String,
     
 })
 

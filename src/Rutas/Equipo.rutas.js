@@ -18,5 +18,6 @@ api.get("/MostrarEquiposID/:id", EquipoController.MostarEquipoID)
 api.get("/BuscarCategoria/:id", md_autorizacion.ensureAuth, EquipoController.BuscarEquipoCategoria)
 api.get("/ObtenerTeam/:id", md_autorizacion.ensureAuth, EquipoController.BuscarTeam)
 api.get("/obtenerUsuario",EquipoController.obtenerUsuario)
+api.put('/unirAEquipo/:id/:idUsuario',  EquipoController.unirAEquipo);
 
 module.exports =api;
