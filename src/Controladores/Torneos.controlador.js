@@ -32,6 +32,7 @@ function registrarTorneo(req, res) {
                         torneoModel.terminado = false,
                         torneoModel.imagen = null,
                         torneoModel.idCategoria = CategoriaId,
+                        torneoModel.campeon = null,
 
                         torneoModel.save((err, torneoGuardado) => {
                             if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
@@ -251,11 +252,7 @@ function equiposTorneo(req, res) {
 
 function unirMiEquipo(req, res) {
     var idTorneo = req.params.idTorneo;
-    var idUsuario = req.user.sub;
-
-    if (req.user.rol != "ROL_COACH") {
-        return res.status(500).send({ mensaje: "Solo el dueño puede unir su equipo al torneo" })
-    }
+    var idUsuario = req.params.idUsuario;
 
     equipos.findOne({ dueño: idUsuario }).exec((err, equipoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: 'Error' });
@@ -281,7 +278,7 @@ function unirMiEquipo(req, res) {
                     if (categoriaT === categoriaE) {
 
                         if (torneoEquipo === null) {
-
+                            
                             if (integrantesEquipo.length >= 5 && integrantesEquipo.length <= 10) {
 
                                 if (cantidadEquipos.length < 10) {
@@ -421,7 +418,8 @@ function terminarTorneo(req, res) {
 
                                     torneos.update({ _id: idTorneo }, {
                                         $set: {
-                                            terminado: true
+                                            terminado: true,
+                                            campeon: idCampeon
                                         }
                                     }, { new: true }, (err, torneoActualizado) => {
                                         if (err) return res.status(500).send({ mensaje: "Error" });
@@ -521,6 +519,22 @@ function obtenerImgTorneo(req, res) {
     }))
 }
 
+function campeon(req, res) {
+    var idTorneo = req.params.idTorneo;
+
+    torneos.findOne({ _id: idTorneo }).exec((err, torneoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener el torneo' });
+        if (!torneoEncontrado) return res.status(500).send({ mensaje: 'El torneo no existe' })
+        var idCampeon = torneoEncontrado.campeon;
+
+        equipos.findOne({ _id: idCampeon }).exec((err, campeonEncontrado) => {
+            if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener al campeon' });
+            if (!torneoEncontrado) return res.status(500).send({ mensaje: 'El equipo no existe' })
+            return res.status(200).send({campeonEncontrado})
+        })
+    })
+}
+
 module.exports = {
     registrarTorneo,
     torneosCategoria,
@@ -533,6 +547,7 @@ module.exports = {
     terminarTorneo,
     unirMiEquipo,
     equiposSinTorneo,
+    campeon,
     subirImgTorneo,
     obtenerImgTorneo
 }

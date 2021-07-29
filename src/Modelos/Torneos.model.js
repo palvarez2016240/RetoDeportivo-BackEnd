@@ -11,6 +11,7 @@ var TorneoShema = Schema({
     iniciado: Boolean,
     terminado: Boolean,
     imagen: String,
+    campeon: {type: Schema.Types.ObjectId, ref: 'Equipo'},
     idCategoria: {type: Schema.Types.ObjectId, ref: 'Categoria'}
 })
 module.exports = mongoose.model('Torneo',TorneoShema);
