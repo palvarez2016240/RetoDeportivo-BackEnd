@@ -4,7 +4,7 @@ var Categoria = require("../Modelos/Categoria.model")
 function CrearCategoria1(req, res) {
     
      //se crea categoria futbol predeterminado de la aplicación
-     Categoria.findOne({ nombre: "FUTBALL" }, (err, buscandoFutball) => {
+     Categoria.findOne({ nombre: "Futbol" }, (err, buscandoFutball) => {
          if (err) {
              console.log("Error al verificar categoria Futball");
          } else if (buscandoFutball) {
@@ -12,11 +12,11 @@ function CrearCategoria1(req, res) {
          } else {
 
                      let cate = new Categoria();
-                     cate.nombre = "FUTBALL";
+                     cate.nombre = "Futbol";
 
                         //Guaradar los datos ingresados
                         cate.save((err, cate1Guardado) => {
-                            if (err) {
+                            if (err) { 
                                  console.log("Error al crear el FUTBALL");
                                 } else if (cate1Guardado) {
                                  console.log("Categoria FUTBALL creada exitosamente");
@@ -30,14 +30,14 @@ function CrearCategoria1(req, res) {
 
 function CrearCategoria2(req, res) {
     //se crea categoria baloncesto predeterminado de la aplicación
-    Categoria.findOne({ nombre: "BALONCESTO" }, (err, buscandoBaloncesto) => {
+    Categoria.findOne({ nombre: "Baloncesto" }, (err, buscandoBaloncesto) => {
         if (err) {
             console.log("Error al verificar categoria Baloncesto");
         } else if (buscandoBaloncesto) {
             console.log("La categoria Baloncesto ya existe");
         } else {
             let cate = new Categoria();
-               cate.nombre = "BALONCESTO";
+               cate.nombre = "Baloncesto";
                   
                 //Guaradar los datos ingresados
                 cate.save((err, cate2Guardado) => {
@@ -54,14 +54,14 @@ function CrearCategoria2(req, res) {
 }
 function CrearCategoria3(req, res) {
     //se crea categoria volleyball predeterminado de la aplicación
-    Categoria.findOne({ nombre: "VOLLEYBALL" }, (err, buscandoVolleyball) => {
+    Categoria.findOne({ nombre: "Voleibol" }, (err, buscandoVolleyball) => {
         if (err) {
             console.log("Error al verificar categoria Volleyball");
         } else if (buscandoVolleyball) {
             console.log("La categoria Volleyball ya existe");
         } else {
             let cate = new Categoria();
-               cate.nombre = "VOLLEYBALL";
+               cate.nombre = "Voleibol";
                   
                 //Guaradar los datos ingresados
                 cate.save((err, cate3Guardado) => {
