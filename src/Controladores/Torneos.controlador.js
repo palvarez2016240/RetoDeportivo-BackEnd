@@ -3,6 +3,7 @@
 var categorias = require("../Modelos/Categoria.model")
 var torneos = require("../Modelos/torneos.model");
 var equipos = require("../Modelos/Equipos.model")
+var Usuario = require("../Modelos/Usuarios.model")
 var fs = require('fs');
 var path = require('path');
 
@@ -535,6 +536,16 @@ function campeon(req, res) {
     })
 }
 
+function obtenerUsuarioId(req, res) {
+    var usuarioId = req.params.id;
+
+    Usuario.findById(usuarioId, (err, usuarioEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion de Usuario' });
+        if (!usuarioEncontrado) return res.status(500).send({ mensaje: 'Error al obtener el Usuario.' });
+        return res.status(200).send({ usuarioEncontrado });
+    }).populate('equipos')
+}
+
 module.exports = {
     registrarTorneo,
     torneosCategoria,
@@ -548,6 +559,7 @@ module.exports = {
     unirMiEquipo,
     equiposSinTorneo,
     campeon,
+    obtenerUsuarioId,
     subirImgTorneo,
     obtenerImgTorneo
 }

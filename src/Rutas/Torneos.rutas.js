@@ -21,6 +21,7 @@ api.put('/unirMiEquipo/:idTorneo/:idUsuario', torneoControlador.unirMiEquipo);
 api.get('/equiposSinTorneo/:idTorneo', torneoControlador.equiposSinTorneo);
 api.post('/subirImagenTorneo/:idTorneo', [md_autorizacion.ensureAuth, md_subirImagen], torneoControlador.subirImgTorneo);
 api.get('/obtenerImagenTorneo/:imagen', torneoControlador.obtenerImgTorneo);
-api.get('/campeon/:idTorneo', torneoControlador.campeon)
+api.get('/campeon/:idTorneo', torneoControlador.campeon);
+api.get('/obtenerUsuario/:id', torneoControlador.obtenerUsuarioId)
 
 module.exports = api;
