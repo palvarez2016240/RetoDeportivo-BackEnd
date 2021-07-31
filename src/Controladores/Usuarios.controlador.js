@@ -160,12 +160,11 @@ function eliminarUsuario(req, res){
 }
 
 function obtenerUsuarios(req, res) {
-    if (req.user.rol != 'ROL_ADMINAPP') {
-        return res.status(500).send({ mensaje: "No puede ver los usuarios" })
-    }
+
     Usuario.find({}).exec((err, Usuarios) => {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion de buscar Usuarios' });
         if (!Usuarios) return res.status(500).send({ mensaje: 'Error al obtener todos los Usuarios.' });
+        console.log(Usuarios)
         return res.status(200).send({ Usuarios })
     })
 }

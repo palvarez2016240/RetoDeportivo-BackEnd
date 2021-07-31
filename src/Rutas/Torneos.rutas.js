@@ -5,6 +5,8 @@ var md_autorizacion = require("../Middlewares/authenticated");
 var multiparty = require('connect-multiparty');
 var torneoControlador = require("../Controladores/Torneos.controlador");
 var md_subirImagen = multiparty({ uploadDir: './src/imagenes/torneos'});
+var jornadaontrolador = require("../Controladores/jornadas.controlador");
+
 
 var api = express.Router();
 
@@ -23,5 +25,7 @@ api.post('/subirImagenTorneo/:idTorneo', [md_autorizacion.ensureAuth, md_subirIm
 api.get('/obtenerImagenTorneo/:imagen', torneoControlador.obtenerImgTorneo);
 api.get('/campeon/:idTorneo', torneoControlador.campeon);
 api.get('/obtenerUsuario/:id', torneoControlador.obtenerUsuarioId)
+api.post("/ingresarJornada/:idLiga", md_autorizacion.ensureAuth, jornadaontrolador.ingresarJornada);
+
 
 module.exports = api;
