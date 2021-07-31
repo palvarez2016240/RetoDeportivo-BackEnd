@@ -26,6 +26,7 @@ api.get('/obtenerImagenTorneo/:imagen', torneoControlador.obtenerImgTorneo);
 api.get('/campeon/:idTorneo', torneoControlador.campeon);
 api.get('/obtenerUsuario/:id', torneoControlador.obtenerUsuarioId)
 api.post("/ingresarJornada/:idLiga", md_autorizacion.ensureAuth, jornadaontrolador.ingresarJornada);
+api.get("/BuscarCampeones/:id",torneoControlador.BuscarCampeonatos)
 
 
 module.exports = api;

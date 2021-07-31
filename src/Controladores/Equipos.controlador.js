@@ -2,6 +2,7 @@
 
 var Equipo = require('../Modelos/Equipos.model')
 var Usuario = require('../Modelos/Usuarios.model')
+
 var fs = require('fs');
 var path = require('path');
 
@@ -449,5 +450,6 @@ module.exports = {
     subirImg,
     obtenerImg,
     obtenerUsuario,
-    unirAEquipo
+    unirAEquipo,
+
 }

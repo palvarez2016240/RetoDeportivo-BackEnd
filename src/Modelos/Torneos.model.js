@@ -14,4 +14,5 @@ var TorneoShema = Schema({
     campeon: {type: Schema.Types.ObjectId, ref: 'Equipo'},
     idCategoria: {type: Schema.Types.ObjectId, ref: 'Categoria'}
 })
+
 module.exports = mongoose.model('Torneo',TorneoShema);

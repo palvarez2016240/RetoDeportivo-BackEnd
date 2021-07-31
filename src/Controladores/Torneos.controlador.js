@@ -546,6 +546,19 @@ function obtenerUsuarioId(req, res) {
     }).populate('equipos')
 }
 
+
+function BuscarCampeonatos(req,res){
+    var idEquipo = req.params.id
+
+    torneos.find({campeon:idEquipo}).exec((err,EquipoEncontrado)=>{
+        if(err) return res.status(500).send({mensaje:"Error en la peticion"})
+        if(!EquipoEncontrado) return res.status(500).send({ mensaje:"No tiene torneos ganados"})
+        return res.status(200).send({EquipoEncontrado})
+    })
+}
+
+
+
 module.exports = {
     registrarTorneo,
     torneosCategoria,
@@ -561,5 +574,6 @@ module.exports = {
     campeon,
     obtenerUsuarioId,
     subirImgTorneo,
-    obtenerImgTorneo
+    obtenerImgTorneo,
+    BuscarCampeonatos
 }
