@@ -1,7 +1,7 @@
 'use strict'
 
 var categorias = require("../Modelos/Categoria.model")
-var torneos = require("../Modelos/torneos.model");
+var torneos = require("../Modelos/Torneos.model");
 var equipos = require("../Modelos/Equipos.model")
 var Usuario = require("../Modelos/Usuarios.model")
 var fs = require('fs');
