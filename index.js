@@ -4,7 +4,7 @@ var admin = require("./src/Controladores/Usuarios.controlador")
 var categoria = require("./src/Controladores/Categoria.controlador")
 
 mongoose.Promise = global.Promise
-mongoose.connect('mongodb+srv://ADMIN:123@retodeportivodb.bgn38.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', { useNewUrlParser: true , useUnifiedTopology: true }).then(()=>{
+mongoose.connect('mongodb://localhost:27017/DBRetoDeportivo', { useNewUrlParser: true , useUnifiedTopology: true }).then(()=>{
     console.log('Bienvenido!');
 
     admin.admin(),
