@@ -12,7 +12,7 @@ mongoose.connect('mongodb+srv://ADMIN:123@retodeportivodb.bgn38.mongodb.net/myFi
     categoria.CrearCategoria2(),
     categoria.CrearCategoria3(),
 
-    app.listen(3000, function (){
+    app.listen(process.env.PORT || 3000, function (){
         console.log("Reto Deportivo esta corriendo satisfactoriamente");
     })
 }).catch(err => console.log(err))
