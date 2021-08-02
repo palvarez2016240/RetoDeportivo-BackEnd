@@ -148,9 +148,17 @@ function editarUsuario(req, res){
 function eliminarUsuario(req, res){
     var UsuarioId = req.params.id
 
+    
     Usuario.findOne({ _id: UsuarioId }).exec((err, userEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error en la solicitud" });
         if (!userEncontrado) return res.status(500).send({ mensaje: "No se han encontrado los datos" })
+        if(userEncontrado.equipos != null){
+            return res.status(500).send({ mensaje: "No puede eliminar el usuario ya que pertenece a un equipo"})
+        }
+       /* if(req.user.rol === "ROL_ADMINAPP"){
+            return res.status(500).send({ mensaje: "No puede eliminar al administrador de la aplicacion"})
+        }*/
+        
         Usuario.findByIdAndDelete(UsuarioId, (err, userEliminado) => {
             if (err) return res.status(500).send({ mensaje: "Error en la solicitud" });
             if (!userEliminado) return res.status(500).send({ mensaje: "No se ha podido eliminar el usuario" });
