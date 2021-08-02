@@ -15,7 +15,7 @@ api.get('/torneosCategoria/:categoriaId', torneoControlador.torneosCategoria);
 api.get('/torneoId/:idTorneo', torneoControlador.torneoId);
 api.put('/editarTorneo/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.editarTorneo);
 api.delete('/eliminarTorneo/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.eliminarTorneo);
-api.post('/unirEquipos/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.unirEquipos);
+api.put('/unirEquipos/:idTorneo', md_autorizacion.ensureAuth, torneoControlador.unirEquipos);
 api.get('/equiposTorneo/:idTorneo', torneoControlador.equiposTorneo);
 api.put('/iniciarTorneo/:idTorneo', torneoControlador.iniciarTorneo);
 api.put('/terminarTorneo/:idTorneo', torneoControlador.terminarTorneo);

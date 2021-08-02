@@ -241,7 +241,7 @@ function equiposTorneo(req, res) {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener el torneo' });
         if (!torneoEncontrado) return res.status(500).send({ mensaje: 'El torneo no existe' })
 
-        equipos.find({ torneo: idTorneo }).exec((err, equiposEncontrado) => {
+        equipos.find({ torneo: idTorneo }).sort({ puntos: -1 }).exec((err, equiposEncontrado) => {
             if (err) return res.status(500).send({ mensaje: 'Error en la peticion de obtener los equipos' });
             if (equiposEncontrado.length === 0) {
                 return res.status(500).send({ mensaje: 'No hay equipos en este torneo' });
