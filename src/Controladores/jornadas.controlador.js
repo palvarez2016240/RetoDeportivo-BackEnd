@@ -130,7 +130,6 @@ function ingresarJornada(req, res) {
                                         if (!JequipoEncontrado) return res.status(500).send({ mensaje: "No se encontro el equipo" })
                                         Equipo.update({ _id: JequipoEncontrado[0]._id }, {
                                             $set: {
-                                                puntos: JequipoEncontrado[0].puntos + Number(params.marcador1),
    
                                                 pj: JequipoEncontrado[0].pj + 1,
                                             }
@@ -140,14 +139,34 @@ function ingresarJornada(req, res) {
                                                 if (!equipoCambiado) return res.status(500).send({ mensaje: "No se pudo cambiar los Equipo 1" })
                                             })
                                         ///---->Se guardan los pts equipo1 si gano +3 o si == +1
-
+                                        ///---->Se guardan los pts equipo1 si gano +3 o si == +1
+                                        if (params.marcador1 > params.marcador2) {
+                                            Equipo.update({ _id: JequipoEncontrado[0]._id }, {
+                                                $set: {
+                                                    puntos: JequipoEncontrado[0].puntos + 3
+                                                }
+                                            },
+                                                (err, equipoCambiado) => {
+                                                    if (err) return res.status(500).send({ mensaje: "Error en la peticion de cambiar pts equipo1" })
+                                                    if (!equipoCambiado) return res.status(500).send({ mensaje: "No se pudo cambiar los pts equipo1" })
+                                                })
+                                        } else if (params.marcador1 == params.marcador2) {
+                                            Equipo.update({ _id: JequipoEncontrado[0]._id }, {
+                                                $set: {
+                                                    puntos: JequipoEncontrado[0].puntos + 1
+                                                }
+                                            },
+                                                (err, equipoCambiado) => {
+                                                    if (err) return res.status(500).send({ mensaje: "Error en la peticion de cambiar pts equipo1" })
+                                                    if (!equipoCambiado) return res.status(500).send({ mensaje: "No se pudo cambiar los pts equipo1" })
+                                                })
+                                        }
                                         ///---->Se guardan los datos del partido en el equipo 2 como golesfavor, DG , GE,etc
                                         Equipo.find({ _id: params.equipo2 }).exec((err, JequipoEncontrado2) => {
                                             if (err) return res.status(500).send({ mensaje: "Error" })
                                             if (!JequipoEncontrado2) return res.status(500).send({ mensaje: "No se encontro el equipo" })
                                             Equipo.update({ _id: JequipoEncontrado2[0]._id }, {
                                                 $set: {
-                                                    puntos: JequipoEncontrado2[0].puntos + Number(params.marcador2),
                                         
                                                         pj: JequipoEncontrado2[0].pj + 1,
                                                 }
@@ -156,6 +175,32 @@ function ingresarJornada(req, res) {
                                                     if (err) return res.status(500).send({ mensaje: "Error en la peticion de cambiar Equipo 2" })
                                                     if (!equipoCambiado2) return res.status(500).send({ mensaje: "No se pudo cambiar Equipo 2" })
                                                 })
+
+
+
+
+
+                                                if (params.marcador2 > params.marcador1) {
+                                                    Equipo.update({ _id: JequipoEncontrado2[0]._id }, {
+                                                        $set: {
+                                                            puntos: JequipoEncontrado2[0].puntos + 3
+                                                        }
+                                                    },
+                                                        (err, equipoCambiado2) => {
+                                                            if (err) return res.status(500).send({ mensaje: "Error en la peticion de cambiar pts equipo2" })
+                                                            if (!equipoCambiado2) return res.status(500).send({ mensaje: "No se pudo cambiar los pts equipo2" })
+                                                        })
+                                                } else if (params.marcador2 == params.marcador1) {
+                                                    Equipo.update({ _id: JequipoEncontrado2[0]._id }, {
+                                                        $set: {
+                                                            puntos: JequipoEncontrado2[0].puntos + 1
+                                                        }
+                                                    },
+                                                        (err, equipoCambiado2) => {
+                                                            if (err) return res.status(500).send({ mensaje: "Error en la peticion de cambiar pts equipo2" })
+                                                            if (!equipoCambiado2) return res.status(500).send({ mensaje: "No se pudo cambiar los pts equipo2" })
+                                                        })
+                                                }
                                         
                                             //---->Se guarda en la base los datos agregados
 
